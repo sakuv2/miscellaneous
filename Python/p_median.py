@@ -4,11 +4,7 @@ p-median問題における動的計画法
 """""""""""""""""""""""""""
 # define(テストデータ)
 w = [5, 1, 4, 2, 7, 3, 6, 3, 9, 5]
-l = [1, 2, 2, 1, 3, 7, 3, 2, 1, 5]
-#w = [2,1,2,1,2]
-#l = [2,1,2,2]
-#w = [2, 1, 2]
-#l = [2, 1]
+l = [1, 2, 2, 1, 3, 7, 3, 2, 1]
 n = len(w)
 k = 4
 
@@ -20,7 +16,7 @@ k = 4
 #     d.append([])
 #     for j in xrange(n):
 #         d[i].append(f(i, j))
-# 上記の処理を無理やり1行？で書いたもの↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
+# 上記の処理を無理やり1行？で書いたもの↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
 d = [(q.append([]), [(q[i].append(
     q[i][j - 1] + l[j - 1] if i < j else (0 if i == j else q[j][i])),
     q[i][j])[1] for j in xrange(n)])[1] for q in [[]] for i in xrange(n)]
@@ -53,6 +49,7 @@ def search_b(i, j, s):  # 逆方向探索
     elif i < j:  # 上に行くならi=i-1、左にいくならj=j-1
         return min(search_b(i - 1, j, s) + w[i] * d[i][j], search_b(i, j - 1, s))
 
+# 漸化式を考える
 
 print search_f(0, 0, k)
 print search_b(n - 1, n - 1, k)
