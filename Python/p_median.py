@@ -70,26 +70,20 @@ def DynamicPrograming():
             dp[n][x][s] = 0
             dp[x][n][s] = 1e99
 
+    # メインループ
     for i in reversed(xrange(n)):
         for j in reversed(xrange(n)):
-            for s in xrange(0, k + 1):
-                if i <= j:  # 上三角行列
-                    if s > 0:
-                        dp[i][j][s] = min(dp[j + 1][j][s - 1] +
-                                          sum([w[x] * d[x][j]
-                                               for x in xrange(i, j)]),
-                                          dp[i][j + 1][s])
-                    else:
-                        dp[i][j][s] = 1e99
+            for s in xrange(k + 1):
+                if s == 0:
+                    dp[i][j][s] = sum([w[x] * d[x][j] for x in xrange(i, n)])
+                elif i <= j:  # 上三角行列
+                    dp[i][j][s] = min(dp[j + 1][j][s - 1] +
+                                      sum([w[x] * d[x][j]
+                                           for x in xrange(i, j)]),
+                                      dp[i][j + 1][s])
                 elif i > j:  # 下三角行列
-                    if s > 0:  # まだkを減らせるなら
-                        # print i, j, s, dp[i + 1][j][s]
-                        dp[i][j][s] = min(dp[i + 1][j][s] +
-                                          w[i] * d[i][j],
-                                          dp[i][i][s])
-                    else:
-                        dp[i][j][s] = sum([w[x] * d[x][j]
-                                           for x in xrange(i, n)])
+                    dp[i][j][s] = min(dp[i + 1][j][s] + w[i] * d[i][j],
+                                      dp[i][i][s])
     return dp[0][0][k]
 
 print search_f(0, 0, k)
