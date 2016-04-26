@@ -80,11 +80,9 @@ def DynamicPrograming():
             for s in xrange(k + 1):
                 if i >= n:
                     dp[i][j][s] = 0
-                elif j >= n:
+                elif j >= n or (s <= 0 and i <= j):
                     dp[i][j][s] = 1e99
-                elif s == 0:
-                    dp[i][j][s] = sum([w[x] * d[x][j] for x in xrange(i, n)])
-                elif i <= j:  # 上三角行列
+                elif i <= j and s > 0:  # 上三角行列
                     dp[i][j][s] = min(dp[j + 1][j][s - 1] +
                                       sum([w[x] * d[x][j]
                                            for x in xrange(i, j)]),
@@ -92,6 +90,7 @@ def DynamicPrograming():
                 elif i > j:  # 下三角行列
                     dp[i][j][s] = min(dp[i + 1][j][s] + w[i] * d[i][j],
                                       dp[i][i][s])
+
     return dp[0][0][k]
 
 print search_f(0, 0, k)
