@@ -30,10 +30,12 @@ d = [(q.append([]), [(q[i].append(
 
 def search_f(i, j, s):  # 順方向探索
     # 終了条件
+    if i == n:
+        return 0
+    if j == n:
+        return 1e99
     if s == 0:
         return sum([w[x] * d[x][j] for x in xrange(i, n)])
-    elif i >= n or j >= n:
-        return 1e99
     # 再帰条件
     if i <= j:  # 下に行くならi=j+1まで、右にいくならj=j+1
         return min(search_f(j + 1, j, s - 1) + sum([w[x] * d[x][j] for x in xrange(i, j)]),
@@ -44,10 +46,12 @@ def search_f(i, j, s):  # 順方向探索
 
 def search_b(i, j, s):  # 逆方向探索
     # 終了条件
+    if i < 0:
+        return 0;
+    if j < 0:
+        return 1e99
     if s == 0:
         return sum([w[x] * d[x][j] for x in xrange(0, i + 1)])
-    elif i < 0 or j < 0:
-        return 1e99
     # 再帰条件
     if i >= j:  # 上に行くならi=j-1まで、左にいくならj=j-1
         return min(search_b(j - 1, j, s - 1) + sum([w[x] * d[x][j] for x in xrange(j + 1, i + 1)]),
@@ -57,24 +61,28 @@ def search_b(i, j, s):  # 逆方向探索
 
 
 # 漸化式を考える ================================================================
+"""
+c(i, j, s): 出発地i~nで、s個の施設を施設候補地j~nへ設置した時の最小コスト
+c(i, j, s)をc(j+1, j, s- ), c(i, j+1, s), c(i+1, j, s), c(i, i, s)で表す？
+"""
 
-# 行列を埋める
+# 約n*n*kの行列を埋める
 
 
 def DynamicPrograming():
     # 初期化
     dp = [[[None for s in xrange(k + 1)] for j in xrange(n + 1)]
           for i in xrange(n + 1)]
-    for x in xrange(n + 1):
-        for s in xrange(k + 1):
-            dp[n][x][s] = 0
-            dp[x][n][s] = 1e99
-
+          
     # メインループ
-    for i in reversed(xrange(n)):
-        for j in reversed(xrange(n)):
+    for i in reversed(xrange(n + 1)):
+        for j in reversed(xrange(n + 1)):
             for s in xrange(k + 1):
-                if s == 0:
+                if i >= n:
+                    dp[i][j][s] = 0
+                elif j >= n:
+                    dp[i][j][s] = 1e99
+                elif s == 0:
                     dp[i][j][s] = sum([w[x] * d[x][j] for x in xrange(i, n)])
                 elif i <= j:  # 上三角行列
                     dp[i][j][s] = min(dp[j + 1][j][s - 1] +
