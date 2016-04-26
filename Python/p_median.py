@@ -3,14 +3,14 @@
 p-median問題における動的計画法
 """""""""""""""""""""""""""
 # define(テストデータ)
-#w = [5, 1, 4, 2, 7, 3, 6, 3, 9, 5]
-#l = [1, 2, 2, 1, 3, 7, 3, 2, 1]
-w = [2, 1, 2, 1, 2]
-l = [2, 1, 2, 2]
+w = [5, 1, 4, 2, 7, 3, 6, 3, 9, 5]
+l = [1, 2, 2, 1, 3, 7, 3, 2, 1]
+#w = [2, 1, 2, 1, 2]
+#l = [2, 1, 2, 2]
 #w = [2, 1, 2]
 #l = [2, 1]
 n = len(w)
-k = 2
+k = 5
 
 # d(iからjまでの距離)の計算
 # d = []
@@ -59,19 +59,20 @@ def search_b(i, j, s):  # 逆方向探索
 # 漸化式を考える ================================================================
 
 # 行列を埋める
-dp = [[[None for s in xrange(k + 1)] for j in xrange(n + 1)]
-      for i in xrange(n + 1)]
 
 
 def DynamicPrograming():
+    # 初期化
+    dp = [[[None for s in xrange(k + 1)] for j in xrange(n + 1)]
+          for i in xrange(n + 1)]
     for x in xrange(n + 1):
         for s in xrange(k + 1):
             dp[n][x][s] = 0
             dp[x][n][s] = 1e99
-            
+
     for i in reversed(xrange(n)):
         for j in reversed(xrange(n)):
-            for s in xrange(k):
+            for s in xrange(0, k + 1):
                 if i <= j:  # 上三角行列
                     if s > 0:
                         dp[i][j][s] = min(dp[j + 1][j][s - 1] +
@@ -82,10 +83,10 @@ def DynamicPrograming():
                         dp[i][j][s] = 1e99
                 elif i > j:  # 下三角行列
                     if s > 0:  # まだkを減らせるなら
-                        print i, j, s, dp[i + 1][j][s]
+                        # print i, j, s, dp[i + 1][j][s]
                         dp[i][j][s] = min(dp[i + 1][j][s] +
                                           w[i] * d[i][j],
-                                          dp[j][j][s])
+                                          dp[i][i][s])
                     else:
                         dp[i][j][s] = sum([w[x] * d[x][j]
                                            for x in xrange(i, n)])
@@ -94,4 +95,3 @@ def DynamicPrograming():
 print search_f(0, 0, k)
 print search_b(n - 1, n - 1, k)
 print DynamicPrograming()
-print dp
