@@ -90,7 +90,6 @@ def DynamicPrograming():
                 elif i > j:  # 下三角行列
                     dp[i][j][s] = min(dp[i + 1][j][s] + w[i] * d[i][j],
                                       dp[i][i][s])
-
     return dp[0][0][k]
 
 print search_f(0, 0, k)
