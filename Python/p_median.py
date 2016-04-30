@@ -24,6 +24,10 @@ k = 5
 d = [(q.append([]), [(q[i].append(
     q[i][j - 1] + l[j - 1] if i < j else (0 if i == j else q[j][i])),
     q[i][j])[1] for j in xrange(n)])[1] for q in [[]] for i in xrange(n)]
+    
+wd = [(q.append([]), [(q[i].append(
+    q[i][j - 1] + w[i]*d[i][j - 1] if i < j else (0 if i == j else q[j][i])),
+    q[i][j])[1] for j in xrange(n)])[1] for q in [[]] for i in xrange(n)]
 
 # 全探索アルゴリズム ==============================================================
 
@@ -47,7 +51,7 @@ def search_f(i, j, s):  # 順方向探索
 def search_b(i, j, s):  # 逆方向探索
     # 終了条件
     if i < 0:
-        return 0;
+        return 0
     if j < 0:
         return 1e99
     if s == 0:
@@ -73,7 +77,7 @@ def DynamicPrograming():
     # 初期化
     dp = [[[None for s in xrange(k + 1)] for j in xrange(n + 1)]
           for i in xrange(n + 1)]
-          
+
     # メインループ
     for i in reversed(xrange(n + 1)):
         for j in reversed(xrange(n + 1)):
@@ -92,6 +96,30 @@ def DynamicPrograming():
                                       dp[i][i][s])
     return dp[0][0][k]
 
+
+def DynamicPrograming2():
+    # 初期化
+    dp = [[[None for s in xrange(k + 1)] for j in xrange(n + 1)]
+          for i in xrange(n + 1)]
+    # メインループ
+    for i in xrange(n + 1):
+        for j in xrange(n + 1):
+            for s in xrange(k + 1):
+                if i == 0:
+                    dp[i][j][s] = 0
+                elif j == 0 or (s <= 0 and i >= j):
+                    dp[i][j][s] = 1e99
+                elif i >= j and s > 0:  # 下三角行列
+                    dp[i][j][s] = min(dp[j - 1][j][s - 1] +
+                                      sum([w[x] * d[x][j-1]
+                                           for x in xrange(j, i)]),
+                                      dp[i][j - 1][s])
+                elif i < j:  # 上三角行列
+                    dp[i][j][s] = min(dp[i - 1][j][s] + w[i - 1] * d[i - 1][j - 1],
+                                      dp[i][i][s])
+    return dp[n][n][k]
+
 print search_f(0, 0, k)
 print search_b(n - 1, n - 1, k)
 print DynamicPrograming()
+print DynamicPrograming2()
