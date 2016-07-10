@@ -77,9 +77,9 @@ def Sln(Xk, A, V, h):
     tb = [tb1, tb2, tb3]
     sfa = lambda x: -1. / (n - 1) * fa(x) ** -(n - 1)
     sfb = lambda x: -1. / (n - 1) * fb(x) ** -(n - 1)
-    
+
     ss = s(1) * (c - a) - (tb[f](b) - tb[f](a)) - (ta[f](c) - ta[f](b))
-    
+
     return np.log(ss)
 
 
@@ -116,7 +116,8 @@ def conditionalln(k, i, Z, X, m, r, a, A, V, h):
         return np.log(model(X[i], m[k], r[k], A, V, h))
     else:
         return Sln([X[i]], A, V, h) - np.log(2 * h)
-        
+
+
 def conditionalln2(k, i, Z, X, a, A, V, h):
     """ [関数] 潜在変数一つの条件付き事後分布からパラメータを積分消去したもの
     p(zi=k|Z_i,X,a) i番目のzがクラスkになる確率
@@ -125,4 +126,4 @@ def conditionalln2(k, i, Z, X, a, A, V, h):
     Z: {list of int} 潜在変数集合
     X: {list of float} データ集合
     """
-    
+    pass
