@@ -15,10 +15,20 @@ def GMM(mix=[1.], loc=[0.], scale=[1.], size=1):
     w = np.random.choice(len(mix), size=size, p=mix)
     return [ss.norm.rvs(loc=loc[i], scale=scale[i]) for i in w]
     
-def Gauss(loc=0., scale=1, size=1):
+def Gauss(loc=0., scale=1., size=1):
+    """ [関数] ガウス分布に従った乱数を生成する
+    loc:
+    scale:
+    size:
+    return: 
+    """
     return ss.norm.rvs(loc=loc, scale=scale, size=size)
     
 def DataSet1(size=100):
     """ [関数] ガウス混合分布のデータセットを手軽に生成
     """
+    
+if __name__ == '__main__':
+    print GMM()
+    print Gauss()
     
