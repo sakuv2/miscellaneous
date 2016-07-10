@@ -6,6 +6,7 @@
 それぞれ、独立な0~1一様分布を事前分布とする。
 """
 import numpy as np
+import scipy.integrate as ig
 from Modules import module as mo
 from Modules import mcmc as mc
 
@@ -74,8 +75,11 @@ def Sln(Xk, A, V, h):
     tb3 = lambda x: -h / (V * (n - 1) * (n - 2)) * fb(x) ** -(n - 2)
     ta = [ta1, ta2, ta3]
     tb = [tb1, tb2, tb3]
-
+    sfa = lambda x: -1. / (n - 1) * fa(x) ** -(n - 1)
+    sfb = lambda x: -1. / (n - 1) * fb(x) ** -(n - 1)
+    
     ss = s(1) * (c - a) - (tb[f](b) - tb[f](a)) - (ta[f](c) - ta[f](b))
+    
     return np.log(ss)
 
 
@@ -100,4 +104,25 @@ def posteriorln2(X, Z, a, A, V, h):
     return mo.Ewln(Z, a) + likelifoodln2(X, Z, A, V, h)
 
 
-def 
+def conditionalln(k, i, Z, X, m, r, a, A, V, h):
+    """ [関数] 潜在変数一つの条件付き事後分布
+    p(zi=k|Z_i,X,m,r,a) i番目のzがクラスkになる確率
+    k: {int} クラス
+    i: {int} 取り除くi番目
+    Z: {list of int} 潜在変数集合
+    X: {list of float} データ集合
+    """
+    if k <= max(Z):
+        return np.log(model(X[i], m[k], r[k], A, V, h))
+    else:
+        return Sln([X[i]], A, V, h) - np.log(2 * h)
+        
+def conditionalln2(k, i, Z, X, a, A, V, h):
+    """ [関数] 潜在変数一つの条件付き事後分布からパラメータを積分消去したもの
+    p(zi=k|Z_i,X,a) i番目のzがクラスkになる確率
+    k: {int} クラス
+    i: {int} 取り除くi番目
+    Z: {list of int} 潜在変数集合
+    X: {list of float} データ集合
+    """
+    

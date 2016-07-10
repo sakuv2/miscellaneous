@@ -53,3 +53,24 @@ def Ewln(Z,a):
     p2 = sum([np.log(a + i) for i in xrange(N)])
     return K * np.log(a) + p1 - p2
     
+def del_XZmr(i, X, Z, m, r):
+    """ [関数] XZmrからi番目を消去する
+    i: {int} 
+    X: {list of float}
+    Z: {list of int}
+    m: {list of float}
+    r: {rist of float}
+    """
+    zi = Z[i]
+    Z_i = Z[:]
+    X_i = X[:]
+    m_i = m[:]
+    r_i = r[:]
+    # i番目のzが示すクラスの個数が一つだった場合
+    if Z.count(zi) == 1:
+        del m[zi]
+        del r[zi]
+    del Z_i[i]
+    del X_i[i]
+    return X_i, Z_i, m_i, r_i   
+    
