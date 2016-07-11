@@ -119,6 +119,21 @@ def lpf(X, threshold, fs):
     K = int(threshold * N / fs)
     Y = X[:K] + [complex(0, 0)] * (N - K)
     return Y
+    
+
+def bpf(X, S, G, fs):
+    """ バンドパスフィルター
+    S[Hz]からG[Hz]だけを切り出します
+    X: 周波数領域の奴
+    S: 切り出す最初
+    G: 切り出す終わり
+    fs: サンプリング周波数
+    """
+    N = len(X)
+    s1 = int(S * N / fs)
+    g1 = int(G * N / fs)
+    Y = [complex(0.0)] * s1 + X[s1:g1] + [complex(0, 0)] * (N - g1)
+    return Y
 
 
 def fft(x):
@@ -189,22 +204,22 @@ def testDFT():
 
 def testFFT():
     x, fs = openWave("record.wav")
-    x = x[:80000]  # 5s
+    x = x[:2**17]  # 5s
 
     # FFT
     X = fft(x)
 
-    # Low Pass Filter
-    Y = lpf(X, 16000, fs)
+    # Band Pass Filter
+    Y = bpf(X, 1000, 4000, fs)
 
     # IFFT
-    y = ifft(X)
+    y = ifft(Y)
 
     # plot
-    myshow(x, y, Y, fs)
+    myshow(x, y, X, fs)
 
     # 音声を保存
-    saveWave(x, fs, 16, "test.wav")
+    saveWave(y, fs, 16, "test.wav")
 
 
 if __name__ == '__main__':
