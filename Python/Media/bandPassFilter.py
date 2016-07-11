@@ -5,6 +5,7 @@ import numpy as np
 from pylab import *
 
 
+
 def openWave(path):
     """ [FUNCTION] waveを読み込む
     path: .wavファイルパス

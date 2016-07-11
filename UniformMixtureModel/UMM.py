@@ -23,6 +23,7 @@ def model(x, m, r, A, V, h):
     """
     c = A + m * V - r * h <= x <= A + m * V + r * h
     return 1. / (2 * h) * mo.Instruction(c)
+    
 
 
 def likelifoodln(X, Z, m, r, A, V, h):
