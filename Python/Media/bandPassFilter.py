@@ -5,7 +5,6 @@ import numpy as np
 from pylab import *
 
 
-
 def openWave(path):
     """ [FUNCTION] waveを読み込む
     path: .wavファイルパス
@@ -120,7 +119,7 @@ def lpf(X, threshold, fs):
     K = int(threshold * N / fs)
     Y = X[:K] + [complex(0, 0)] * (N - K)
     return Y
-    
+
 
 def bpf(X, S, G, fs):
     """ バンドパスフィルター
