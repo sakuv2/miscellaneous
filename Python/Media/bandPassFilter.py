@@ -78,7 +78,7 @@ def myshow(x, y, X2, fs):
     axis([0, fs / 2, 0, 2])
     xlabel("frequency [Hz]")
     ylabel("amplitude spectrum2[DFT]")
-    
+
     #figure(figsize=(10, 7))
 
     show()
@@ -121,8 +121,8 @@ def lpf(X, threshold, fs):
     K = int(threshold * N / fs)
     Y = X[:K] + [complex(0, 0)] * (N - K)
     return Y
-    
-    
+
+
 def hpf(X, threshold, fs):
     """ ﾊｲﾊﾟｽﾌｨﾙﾀｰ
     X: 周波数領域の奴
@@ -131,7 +131,7 @@ def hpf(X, threshold, fs):
     """
     N = len(X)
     K = int(threshold * N / fs)
-    Y = [complex(0, 0)] * (N - K) + X[K:]
+    Y = [complex(0, 0)] * K + X[K:]
     return Y
 
 
@@ -224,7 +224,7 @@ def testFFT():
     X = fft(x)
 
     # Band Pass Filter
-    Y = bpf(X, 1000, 4000, fs)
+    Y = hpf(X, 1000, fs)
 
     # IFFT
     y = ifft(Y)
