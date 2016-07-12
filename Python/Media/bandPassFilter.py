@@ -78,6 +78,8 @@ def myshow(x, y, X2, fs):
     axis([0, fs / 2, 0, 2])
     xlabel("frequency [Hz]")
     ylabel("amplitude spectrum2[DFT]")
+    
+    #figure(figsize=(10, 7))
 
     show()
 
