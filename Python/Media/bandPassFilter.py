@@ -224,7 +224,7 @@ def testFFT():
     X = fft(x)
 
     # Band Pass Filter
-    Y = hpf(X, 1000, fs)
+    Y = hpf(X, 6000, fs)
 
     # IFFT
     y = ifft(Y)
