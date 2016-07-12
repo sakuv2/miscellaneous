@@ -41,6 +41,8 @@ def saveWave(x, fs, bit, path):
 
 
 def myshow(x, y, X2, fs):
+    """ [関数] グラフで結果をみる
+    """
     N = len(x)    # FFTのサンプル数
 
     X = np.fft.fft(x)
@@ -119,7 +121,8 @@ def lpf(X, threshold, fs):
     """
     N = len(X)
     K = int(threshold * N / fs)
-    Y = X[:K] + [complex(0, 0)] * (N - K)
+    F = [1] * K + [0] * (N - 2 * K) + [1] * K
+    Y = [i * j for i, j in zip(X, F)]
     return Y
 
 
@@ -131,7 +134,8 @@ def hpf(X, threshold, fs):
     """
     N = len(X)
     K = int(threshold * N / fs)
-    Y = [complex(0, 0)] * K + X[K:]
+    F = [0] * K + [1] * (N - 2 * K) + [0] * K
+    Y = [i * j for i, j in zip(X, F)]
     return Y
 
 
@@ -144,9 +148,10 @@ def bpf(X, S, G, fs):
     fs: サンプリング周波数
     """
     N = len(X)
-    s1 = int(S * N / fs)
-    g1 = int(G * N / fs)
-    Y = [complex(0.0)] * s1 + X[s1:g1] + [complex(0, 0)] * (N - g1)
+    L = int(S * N / fs)
+    H = int(G * N / fs)
+    F = [0] * L + [1] * (H - L) + [0] * (N - 2 * H) + [1] * (H - L) + [0] * L
+    Y = [i * j for i, j in zip(X, F)]
     return Y
 
 
@@ -204,7 +209,7 @@ def testDFT():
     X = dft(x)
 
     # Low Pass Filter
-    Y = lpf(X, 16000, fs)
+    Y = lpf(X, 1000, fs)
 
     # IDFT
     y = idft(Y)
@@ -217,23 +222,31 @@ def testDFT():
 
 
 def testFFT():
+    # 音声読み込み
+    # fsサンプリング周波数16000[Hz], len(x)160000(10[s])
     x, fs = openWave("record.wav")
-    x = x[:2**17]  # 5s
+    x = x[:2**17]  # 8.19[s]だけ変換する
 
     # FFT
     X = fft(x)
 
-    # Band Pass Filter
-    Y = hpf(X, 6000, fs)
+    # Filter
+    Y1 = lpf(X, 1000, fs)
+    Y2 = hpf(X, 4000, fs)
+    Y3 = bpf(X, 1000, 4000, fs)
 
     # IFFT
-    y = ifft(Y)
+    y1 = ifft(Y1)
+    y2 = ifft(Y2)
+    y3 = ifft(Y3)
 
-    # plot
-    myshow(x, y, X, fs)
+    # パワースペクトルなどのプロット
+    myshow(x, y3, Y3, fs)
 
     # 音声を保存
-    saveWave(y, fs, 16, "test.wav")
+    saveWave(y1, fs, 16, "lpf.wav")
+    saveWave(y2, fs, 16, "hpf.wav")
+    saveWave(y3, fs, 16, "bpf.wav")
 
 
 if __name__ == '__main__':
