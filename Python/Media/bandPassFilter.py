@@ -121,6 +121,18 @@ def lpf(X, threshold, fs):
     K = int(threshold * N / fs)
     Y = X[:K] + [complex(0, 0)] * (N - K)
     return Y
+    
+    
+def hpf(X, threshold, fs):
+    """ ﾊｲﾊﾟｽﾌｨﾙﾀｰ
+    X: 周波数領域の奴
+    threshold: 閾値[Hz]
+    fs: サンプリング周波数
+    """
+    N = len(X)
+    K = int(threshold * N / fs)
+    Y = [complex(0, 0)] * (N - K) + X[K:]
+    return Y
 
 
 def bpf(X, S, G, fs):
