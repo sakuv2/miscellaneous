@@ -40,7 +40,7 @@ def saveWave(x, fs, bit, path):
     wf.close()
 
 
-def myshow(x, y, X2, fs):
+def myshow(x, y1, y2, y3, X1, X2, X3, fs):
     """ [関数] グラフで結果をみる
     """
     N = len(x)    # FFTのサンプル数
@@ -49,41 +49,86 @@ def myshow(x, y, X2, fs):
     freqList = np.fft.fftfreq(N, d=1.0 / fs)
 
     amplitudeSpectrum = [np.sqrt(c.real ** 2 + c.imag ** 2) for c in X]
+    amplitudeSpectrum1 = [np.sqrt(c.real ** 2 + c.imag ** 2) for c in X1]
     amplitudeSpectrum2 = [np.sqrt(c.real ** 2 + c.imag ** 2) for c in X2]
+    amplitudeSpectrum3 = [np.sqrt(c.real ** 2 + c.imag ** 2) for c in X3]
+
+    fig = figure(figsize=(10,10))
 
     # 波形を描画
-    subplot(411)
+    subplot(421)
     plot(range(0, N), x)
     axis([0, N, -0.5, 0.5])
+    ylim(-0.05, 0.05)
     # xlabel("time [sample]")
-    ylabel("amplitude")
-
-    # 波形を描画
-    subplot(412)
-    plot(range(0, N), y)
-    axis([0, N, -0.5, 0.5])
-    xlabel("time [sample]")
-    ylabel("amplitude[LPF]")
-
+    # ylabel("amplitude")
+    
     # 振幅スペクトルを描画
-    subplot(413)
+    subplot(422)
     n = len(freqList) / 2  # FFTの結果は半分まで見ればOK
     plot(freqList[:n], amplitudeSpectrum[:n], linestyle='-')
     axis([0, fs / 2, 0, 2])
     # xlabel("frequency [Hz]")
-    ylabel("amplitude spectrum[FFT]")
+    # ylabel("amplitude spectrum[FFT]")
+
+    # 波形を描画
+    subplot(423)
+    plot(range(0, N), y1)
+    title("LPF")
+    axis([0, N, -0.5, 0.5])
+    ylim(-0.05, 0.05)
+    # xlabel("time [sample]")
+    # ylabel("amplitude")
 
     # 振幅スペクトルを描画
-    subplot(414)
+    subplot(424)
+    n = len(freqList) / 2  # FFTの結果は半分まで見ればOK
+    plot(freqList[:n], amplitudeSpectrum1[:n], linestyle='-')
+    title("LPF")
+    axis([0, fs / 2, 0, 2])
+    # xlabel("frequency [Hz]")
+    # ylabel("amplitude spectrum[DFT]")
+    
+    # 波形を描画
+    subplot(425)
+    plot(range(0, N), y2)
+    title("HPF")
+    axis([0, N, -0.5, 0.5])
+    ylim(-0.05, 0.05)
+    # xlabel("time [sample]")
+    # ylabel("amplitude")
+
+    # 振幅スペクトルを描画
+    subplot(426)
     n = len(freqList) / 2  # FFTの結果は半分まで見ればOK
     plot(freqList[:n], amplitudeSpectrum2[:n], linestyle='-')
+    title("HPF")
+    axis([0, fs / 2, 0, 2])
+    # xlabel("frequency [Hz]")
+    # ylabel("amplitude spectrum[DFT]")
+    
+    # 波形を描画
+    subplot(427)
+    plot(range(0, N), y3)
+    title("BPF")
+    axis([0, N, -0.5, 0.5])
+    ylim(-0.05, 0.05)
+    xlabel("time [sample]")
+    # ylabel("amplitude")
+
+    # 振幅スペクトルを描画
+    subplot(428)
+    n = len(freqList) / 2  # FFTの結果は半分まで見ればOK
+    plot(freqList[:n], amplitudeSpectrum3[:n], linestyle='-')
+    title("BPF")
     axis([0, fs / 2, 0, 2])
     xlabel("frequency [Hz]")
-    ylabel("amplitude spectrum2[DFT]")
+    # ylabel("amplitude spectrum[DFT]")
 
     #figure(figsize=(10, 7))
-
-    show()
+    fig.tight_layout()
+    
+    savefig('zu1.eps', format='eps', dpi=1000)
 
 
 def dft(x):
@@ -204,21 +249,22 @@ def ifft(X):
 
 def testDFT():
     x, fs = openWave("record.wav")
-    x = x[:512]  # 1s[16000]
+    x = x[8000:8512]  # 1s[16000]
     # DFT
     X = dft(x)
 
-    # Low Pass Filter
-    Y = lpf(X, 1000, fs)
+    # Filter
+    Y1 = lpf(X, 1000, fs)
+    Y2 = hpf(X, 4000, fs)
+    Y3 = bpf(X, 1000, 4000, fs)
 
-    # IDFT
-    y = idft(Y)
+    # IFFT
+    y1 = ifft(Y1)
+    y2 = ifft(Y2)
+    y3 = ifft(Y3)
 
     # plot
-    myshow(x, y, Y, fs)
-
-    # 音声を保存
-    saveWave(y, fs, 16, "test.wav")
+    myshow(x, y1, y2, y3, Y1, Y2, Y3, fs)
 
 
 def testFFT():
@@ -240,9 +286,6 @@ def testFFT():
     y2 = ifft(Y2)
     y3 = ifft(Y3)
 
-    # パワースペクトルなどのプロット
-    myshow(x, y3, Y3, fs)
-
     # 音声を保存
     saveWave(y1, fs, 16, "lpf.wav")
     saveWave(y2, fs, 16, "hpf.wav")
@@ -250,4 +293,4 @@ def testFFT():
 
 
 if __name__ == '__main__':
-    testFFT()
+    testDFT()
