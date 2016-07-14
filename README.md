@@ -1,4 +1,4 @@
 # miscellaneous
 ***
 ## 雑記を置いておくところ
-はaaaa
+nullpo
